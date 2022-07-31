@@ -7,6 +7,8 @@ This is a basic mod menu created in C#. It is a base which you can add your own 
  - Lobby Host Switcher
  - Press and hold Numpad 2 to repair the car
  Note: This will allow you to get in and leave. Everyone else must go through the gate
+ - Numpad 3 to set all items off on the map (Fireworks, Radio, Television, Etc)
+ - Numpad 8 to go flying sky high
  - Round information (Car parts required, Armory Code)
  - Aimbot (Will lock on to both AI Creature and Player Creature)
  Note: For Aimbot, just equip the rifleand hold right mouse click (ADS) and move towards the enemy. It will snap to their head
