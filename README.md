@@ -1,14 +1,29 @@
-BaseLoader C#
-A template for internal DLL mods/hacks to be injected in Unity Mono games.
+In Silence - C# DLL Source [Base]
 
-- Render.cs is included to allow for drawing after using w2s
-- Basic DrawESP Method included for box and labels after using w2s
-- Injected DLL unload key (Default: End)
-- Some base Unity DLL assemblies have been included.
+Note: This mod works with Wemod loaded aswell.
+This is a basic mod menu created in C#. It is a base which you can add your own items to it or modifications. Currently it has the following.
 
-Make sure to add the required references to the games Assembly DLL's to pull methods, classes and objects
+ - ESP (Players, Items, Creature (Bones), Alerting items, Vehicle, Armory)
+ - Lobby Host Switcher
+ - Press and hold Numpad 2 to repair the car
+ Note: This will allow you to get in and leave. Everyone else must go through the gate
+ - Numpad 3 to set all items off on the map (Fireworks, Radio, Television, Etc)
+ - Numpad 8 to go flying sky high
+ - Round information (Car parts required, Armory Code)
+ - Aimbot (Will lock on to both AI Creature and Player Creature)
+ Note: For Aimbot, just equip the rifleand hold right mouse click (ADS) and move towards the enemy. It will snap to their head
+ 
+Insert Key - Show/Hide Menu 
+End Key - Unload DLL File safely
 
-Injection properties.
-- Namespace: BaseLoader
-- Class: Loader
-- Method: init
+To compile..
+
+    Download & Open Sln file for Visual Studio
+    Compile in Debug or Release (Doesn't matter)
+
+To Inject..
+
+    Use a Mono injector (Possibly MonoSharpInjector)
+    Select Process and browse to the assembly to inject (In_Silence.dll)
+    Use the following settings.. -- Namespace: In_Silence -- Class name: Loader -- Method name: init
+    Press inject
