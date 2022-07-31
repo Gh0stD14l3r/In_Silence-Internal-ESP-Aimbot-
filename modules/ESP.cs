@@ -261,8 +261,11 @@ namespace In_Silence.modules
                         if (Hacks.MainCamera.WorldToScreenPoint(entity.transform.position).z > 0f && Vector3.Distance(entity.transform.position, Hacks.MainCamera.transform.position) >= 1f)
                         {
                             Transform[] entityBones = entity.GetComponentInChildren<SkinnedMeshRenderer>().bones;
-                            
-                            if (entity.characterType == PlayableCharacter.CharacterType.Survivor || entity.characterType == PlayableCharacter.CharacterType.Rat)
+                            if (entity.characterType == PlayableCharacter.CharacterType.Rat)
+                            {
+                                DrawText(Hacks.MainCamera.WorldToScreenPoint(entity.transform.position), Color.green, $"Rat [{Math.Round(Vector3.Distance(entity.transform.position, Hacks.MainCamera.transform.position), 0)}]");
+                            }
+                            if (entity.characterType == PlayableCharacter.CharacterType.Survivor)
                             {
                                 DrawText(Hacks.MainCamera.WorldToScreenPoint(entity.transform.position), Color.green, $"Survivor [{Math.Round(Vector3.Distance(entity.transform.position, Hacks.MainCamera.transform.position),0)}]");
                                 /*

@@ -47,6 +47,7 @@ namespace In_Silence
         public static List<Photon.Realtime.Player> ePlayers = new List<Photon.Realtime.Player>();
 
         private static bool runEndOfGame = false;
+        public static string dbg = "";
         public void Start()
         {
             
@@ -74,9 +75,30 @@ namespace In_Silence
             }
             if (Input.GetKeyDown(KeyCode.Keypad2))
             {
-                
-               
+                if (game_objects.in_silence.Vehicle != null)
+                {
+                    foreach (TruckPart p in game_objects.in_silence.Vehicle.missingParts)
+                    {
+                        game_objects.in_silence.Vehicle.RepairPart(p.partID);
+                    }
+                }
             }
+
+            if (Input.GetKey(KeyCode.Keypad8))
+            {
+                foreach (PlayableCharacter entity in Hacks.ePlayableCharacter)
+                {
+                    if (entity != null)
+                    {
+                        entity.transform.position = new Vector3(entity.transform.position.x, entity.transform.position.y + 10f, entity.transform.position.z);
+                        if (Hacks.MainCamera.WorldToScreenPoint(entity.transform.position).z > 0f && Vector3.Distance(entity.transform.position, Hacks.MainCamera.transform.position) <= 0.5f)
+                        {
+                            entity.transform.position = new Vector3(entity.transform.position.x, entity.transform.position.y + 10f, entity.transform.position.z);
+                        }
+                    }
+                }
+            }
+
             if (Input.GetKeyDown(KeyCode.Keypad3))
             {
                 foreach (ActivableItem entity in Hacks.eActivableItem)
@@ -122,7 +144,7 @@ namespace In_Silence
         {
             modules.ESP.performESP();
             modules.UI.displayUI();
-            
+            GUI.Label(new Rect(0, 0, (float)Screen.width, 50f), dbg);
         }
 
         
