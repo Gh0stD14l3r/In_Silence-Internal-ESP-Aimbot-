@@ -1,5 +1,8 @@
 In Silence - C# DLL Source [Base]
 
+![image](https://user-images.githubusercontent.com/38970826/182014147-131eaf88-c434-4ec1-92d8-5adb9f835f2d.png)
+
+
 Note: This mod works with Wemod loaded aswell.
 This is a basic mod menu created in C#. It is a base which you can add your own items to it or modifications. Currently it has the following.
 
