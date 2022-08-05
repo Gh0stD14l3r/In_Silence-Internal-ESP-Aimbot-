@@ -254,23 +254,28 @@ namespace In_Silence.modules
 
             if (modules.UI.t_ESPPlayer)
             {
-                foreach (PlayableCharacter entity in Hacks.ePlayableCharacter)
+
+                foreach (SurvivorNetworking entity in Hacks.ePlayableCharacter)
                 {
                     if (entity != null)
                     {
-                        if (Hacks.MainCamera.WorldToScreenPoint(entity.transform.position).z > 0f && Vector3.Distance(entity.transform.position, Hacks.MainCamera.transform.position) >= 1f)
+                        if (Hacks.MainCamera.WorldToScreenPoint(entity.transform.position).z > 0f && Vector3.Distance(entity.transform.position, Hacks.MainCamera.transform.position) >= 1f && !entity.photonView.Owner.IsLocal)
                         {
-                            Transform[] entityBones = entity.GetComponentInChildren<SkinnedMeshRenderer>().bones;
-                            if (entity.characterType == PlayableCharacter.CharacterType.Rat)
+                            
+                            if (entity.playerState.isRat)
                             {
-                                DrawText(Hacks.MainCamera.WorldToScreenPoint(entity.transform.position), Color.green, $"Rat [{Math.Round(Vector3.Distance(entity.transform.position, Hacks.MainCamera.transform.position), 0)}]");
+                                DrawText(Hacks.MainCamera.WorldToScreenPoint(entity.GetComponentInChildren<PlayableCharacter>().transform.position), Color.yellow, $"Rat");
                             }
-                            if (entity.characterType == PlayableCharacter.CharacterType.Survivor)
+                            
+                            if (entity.playerState.isSurvivor)
                             {
-                                DrawText(Hacks.MainCamera.WorldToScreenPoint(entity.transform.position), Color.green, $"Survivor [{Math.Round(Vector3.Distance(entity.transform.position, Hacks.MainCamera.transform.position),0)}]");
-                                /*
+                                Transform[] entityBones = entity.GetComponentInChildren<PlayableCharacter>().GetComponentInChildren<SkinnedMeshRenderer>().bones;
+
+                                DrawText(Hacks.MainCamera.WorldToScreenPoint(entity.transform.position), Color.green, $"{entity.photonView.Owner.NickName} [{Math.Round(Vector3.Distance(entity.transform.position, Hacks.MainCamera.transform.position), 0)}]");
+
                                 Vector3 tbone_head = Camera.current.WorldToScreenPoint(entityBones.Where<Transform>(b => b.name.ToLower().Contains("head")).ToArray().First().position);
                                 Vector3 tbone_neck = Camera.current.WorldToScreenPoint(entityBones.Where<Transform>(b => b.name.ToLower().Contains("neck")).ToArray().First().position);
+                                Vector3 tbone_spine1 = Camera.current.WorldToScreenPoint(entityBones.Where<Transform>(b => b.name.ToLower().Contains("spine_1")).ToArray().First().position);
                                 Vector3 tbone_hips = Camera.current.WorldToScreenPoint(entityBones.Where<Transform>(b => b.name.ToLower().Contains("hips")).ToArray().First().position);
 
                                 Vector3 tbone_shoulderL = Camera.current.WorldToScreenPoint(entityBones.Where<Transform>(b => b.name.ToLower().Contains("shoulder.l")).ToArray().First().position);
@@ -283,49 +288,56 @@ namespace In_Silence.modules
                                 Vector3 tbone_elbowR = Camera.current.WorldToScreenPoint(entityBones.Where<Transform>(b => b.name.ToLower().Contains("elbow.r")).ToArray().First().position);
                                 Vector3 tbone_handR = Camera.current.WorldToScreenPoint(entityBones.Where<Transform>(b => b.name.ToLower().Contains("hand.r")).ToArray().First().position);
 
-                                Vector3 tbone_legR = Camera.current.WorldToScreenPoint(entityBones.Where<Transform>(b => b.name.ToLower().Contains("hips.r")).ToArray().First().position);
-                                Vector3 tbone_leg1R = Camera.current.WorldToScreenPoint(entityBones.Where<Transform>(b => b.name.ToLower().Contains("knee.r")).ToArray().First().position);
+                                Vector3 tbone_legR = Camera.current.WorldToScreenPoint(entityBones.Where<Transform>(b => b.name.ToLower().Contains("knee.r")).ToArray().First().position);
                                 Vector3 tbone_footR = Camera.current.WorldToScreenPoint(entityBones.Where<Transform>(b => b.name.ToLower().Contains("foot.r")).ToArray().First().position);
 
-                                Vector3 tbone_legL = Camera.current.WorldToScreenPoint(entityBones.Where<Transform>(b => b.name.ToLower().Contains("hips.l")).ToArray().First().position);
-                                Vector3 tbone_leg1L = Camera.current.WorldToScreenPoint(entityBones.Where<Transform>(b => b.name.ToLower().Contains("knee.l")).ToArray().First().position);
+                                Vector3 tbone_legL = Camera.current.WorldToScreenPoint(entityBones.Where<Transform>(b => b.name.ToLower().Contains("knee.l")).ToArray().First().position);
                                 Vector3 tbone_footL = Camera.current.WorldToScreenPoint(entityBones.Where<Transform>(b => b.name.ToLower().Contains("foot.l")).ToArray().First().position);
-
+                                
 
                                 DrawBoneLine(tbone_head, tbone_neck, Color.green);
                                 DrawBoneLine(tbone_neck, tbone_hips, Color.green);
+                                
                                 DrawBoneLine(tbone_hips, tbone_legR, Color.green);
-                                DrawBoneLine(tbone_legR, tbone_leg1R, Color.green);
-                                DrawBoneLine(tbone_leg1R, tbone_footR, Color.green);
+                                DrawBoneLine(tbone_legR, tbone_footR, Color.green);
+
                                 DrawBoneLine(tbone_hips, tbone_legL, Color.green);
-                                DrawBoneLine(tbone_legL, tbone_leg1L, Color.green);
-                                DrawBoneLine(tbone_leg1L, tbone_footL, Color.green);
+                                DrawBoneLine(tbone_legL, tbone_footL, Color.green);
+
                                 DrawBoneLine(tbone_neck, tbone_shoulderL, Color.green);
                                 DrawBoneLine(tbone_shoulderL, tbone_armL, Color.green);
                                 DrawBoneLine(tbone_armL, tbone_elbowL, Color.green);
                                 DrawBoneLine(tbone_elbowL, tbone_handL, Color.green);
+
                                 DrawBoneLine(tbone_neck, tbone_shoulderR, Color.green);
                                 DrawBoneLine(tbone_shoulderR, tbone_armR, Color.green);
                                 DrawBoneLine(tbone_armR, tbone_elbowR, Color.green);
                                 DrawBoneLine(tbone_elbowR, tbone_handR, Color.green);
-                                */
+                                
                             }
 
                         }
                     }
+                    
                 }
 
-                foreach (PlayableCharacter entity in Hacks.ePlayableCharacter)
+                foreach (PlayableCharacter entity in Hacks.eBodyPlayer)
                 {
                     if (entity != null)
                     {
                         if (Hacks.MainCamera.WorldToScreenPoint(entity.transform.position).z > 0f && Vector3.Distance(entity.transform.position, Hacks.MainCamera.transform.position) >= 1f)
                         {
-                            Transform[] entityBones = entity.GetComponentInChildren<SkinnedMeshRenderer>().bones;
+                            if (entity.characterType == PlayableCharacter.CharacterType.Rat)
+                            {
+                                DrawText(Hacks.MainCamera.WorldToScreenPoint(entity.GetComponentInChildren<PlayableCharacter>().transform.position), Color.yellow, "Rat");
+                            }
                             
                             if (entity.characterType == PlayableCharacter.CharacterType.Creature)
                             {
-                                DrawText(Hacks.MainCamera.WorldToScreenPoint(entity.transform.position), Color.cyan, entity.name);
+                                Transform[] entityBones = entity.GetComponentInChildren<PlayableCharacter>().GetComponentInChildren<SkinnedMeshRenderer>().bones;
+
+                                DrawText(Hacks.MainCamera.WorldToScreenPoint(entity.GetComponentInChildren<PlayableCharacter>().transform.position), Color.cyan, "Creature");
+                                
                                 Vector3 tbone_head = Camera.current.WorldToScreenPoint(entityBones.Where<Transform>(b => b.name.ToLower().Contains("head")).ToArray().First().position);
                                 Vector3 tbone_neck = Camera.current.WorldToScreenPoint(entityBones.Where<Transform>(b => b.name.ToLower().Contains("neck")).ToArray().First().position);
                                 Vector3 tbone_spine1 = Camera.current.WorldToScreenPoint(entityBones.Where<Transform>(b => b.name.ToLower().Contains("spine_1")).ToArray().First().position);
@@ -429,7 +441,7 @@ namespace In_Silence.modules
                         {
                             DrawText(Hacks.MainCamera.WorldToScreenPoint(entity.transform.position), Color.magenta, $"Creature: [{Math.Round(Vector3.Distance(entity.transform.position, Hacks.MainCamera.transform.position),0)}]");
 
-                            Transform[] entityBones = entity.GetComponentInChildren<SkinnedMeshRenderer>().bones;
+                            /*Transform[] entityBones = entity.GetComponentInChildren<SkinnedMeshRenderer>().bones;
 
                             Vector3 tbone_head = Camera.current.WorldToScreenPoint(entityBones.Where<Transform>(b => b.name.Contains("head")).ToArray().First().position);
                             Vector3 tbone_neck = Camera.current.WorldToScreenPoint(entityBones.Where<Transform>(b => b.name.Contains("neck")).ToArray().First().position);
@@ -502,7 +514,7 @@ namespace In_Silence.modules
                             DrawBoneLine(tbone_tail3, tbone_tail4, Color.magenta);
                             DrawBoneLine(tbone_tail4, tbone_tail5, Color.magenta);
                             DrawBoneLine(tbone_tail5, tbone_tail6, Color.magenta);
-                            DrawBoneLine(tbone_tail6, tbone_tail7, Color.magenta);
+                            DrawBoneLine(tbone_tail6, tbone_tail7, Color.magenta);*/
 
                         }
                     }

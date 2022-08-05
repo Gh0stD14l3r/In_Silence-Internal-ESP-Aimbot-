@@ -15,11 +15,13 @@ namespace In_Silence.modules
         public static Rect ESPMenu = new Rect(5f, 5f, 300f, 123f);
         public static Rect GameInfoMenu = new Rect(5f, 5f, 330f, 200f);
         public static Rect PlayerMenu = new Rect(5f, 5f, 460f, 210f);
+        public static Rect ControlMenu = new Rect(5f, 5f, 295f, 130f);
 
         public static bool esp_menu = false;
         public static bool gameinfo_menu = false;
         public static bool player_menu = false;
         public static bool main_menu = true;
+        public static bool control_menu = false;
 
         public static bool toggleESPCreature = false;
         public static bool toggleESPPlayer = false;
@@ -27,6 +29,7 @@ namespace In_Silence.modules
         public static bool toggleESPAlertItem = false;
         public static bool toggleESPVehicle = false;
         public static bool toggleAimbot = false;
+        public static bool toggleFlyMode = false;
 
         public static bool t_ESPCreature = false;
         public static bool t_ESPPlayer = false;
@@ -34,6 +37,7 @@ namespace In_Silence.modules
         public static bool t_ESPAlertItem = false;
         public static bool t_ESPVehicle = false;
         public static bool t_Aimbot = false;
+        public static bool t_FlyMode = false;
 
         public static bool t_menuesp = false;
         public static bool t_menuplayer = false;
@@ -61,6 +65,10 @@ namespace In_Silence.modules
             if (modules.UI.gameinfo_menu)
             {
                 modules.UI.GameInfoMenu = GUI.Window(1, modules.UI.GameInfoMenu, modules.UI.GameInfoWindow, "In Silence - Info Menu - Gh0st");
+            }
+            if (modules.UI.control_menu)
+            {
+                modules.UI.ControlMenu = GUI.Window(2, modules.UI.ControlMenu, modules.UI.ControlWindow, "In Silence - Control Menu - Gh0st");
             }
             if (modules.UI.player_menu)
             {
@@ -166,8 +174,8 @@ namespace In_Silence.modules
             {
                 modules.UI.gameinfo_menu = !modules.UI.gameinfo_menu;
             }
-            modules.UI.t_menu_control = GUI.Toggle(new Rect(10f, 95f, 203f, 20f), modules.UI.t_menucontrol, "Control Menu");
-            if (modules.UI.t_menu_control != modules.UI.t_menucontrol)
+            modules.UI.control_menu = GUI.Toggle(new Rect(10f, 95f, 203f, 20f), modules.UI.t_menucontrol, "Control Menu");
+            if (modules.UI.control_menu != modules.UI.t_menucontrol)
             {
                 modules.UI.t_menucontrol = !modules.UI.t_menucontrol;
             }
@@ -176,6 +184,41 @@ namespace In_Silence.modules
             {
                 modules.UI.t_Aimbot = !modules.UI.t_Aimbot;
             }
+            GUI.DragWindow(new Rect(0, 0, (float)Screen.width, (float)Screen.height));
+        }
+
+        public static void ControlWindow(int windowID)
+        {
+            if (GUI.Button(new Rect(10f, 20f, 132f, 25f), "Fix Vehicle Part"))
+            {
+                if (game_objects.in_silence.Vehicle != null)
+                {
+                    foreach (TruckPart p in game_objects.in_silence.Vehicle.missingParts)
+                    {
+                        //game_objects.in_silence.Vehicle.RepairPart(p.partID);
+                        game_objects.in_silence.Vehicle.photonView.RPC("RepairPart", RpcTarget.All, (object)p.partID);
+                    }
+                }
+            }
+            
+
+            if (GUI.Button(new Rect(147f, 20f, 132f, 25f), "Toggle Alert Items"))
+            {
+                foreach (ActivableItem entity in Hacks.eActivableItem)
+                {
+                    if (entity != null)
+                    {
+                        entity.ActivateOrDeactivate();
+                    }
+                }
+            }
+
+            modules.UI.toggleFlyMode = GUI.Toggle(new Rect(10f, 61f, 269f, 20f), modules.UI.t_FlyMode, "Toggle Flying (Numpad + / - )");
+            if (modules.UI.toggleFlyMode != modules.UI.t_FlyMode)
+            {
+                modules.UI.t_FlyMode = !modules.UI.t_FlyMode;
+            }
+            
             GUI.DragWindow(new Rect(0, 0, (float)Screen.width, (float)Screen.height));
         }
     }

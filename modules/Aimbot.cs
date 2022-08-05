@@ -25,7 +25,7 @@ namespace In_Silence.modules
 
             if (Aimbot_Active)
             {
-                foreach (PlayableCharacter entity in Hacks.ePlayableCharacter)
+                foreach (SurvivorNetworking entity in Hacks.ePlayableCharacter)
                 {
                     if (entity != null && entity.name.Contains("Creature"))
                     {

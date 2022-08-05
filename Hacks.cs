@@ -24,7 +24,7 @@ namespace In_Silence
         public static List<DogHouse> eDogHouse = new List<DogHouse>();
         public static List<GroundItem> eGroundItem = new List<GroundItem>();
         public static List<JackInBox> eJackInBox = new List<JackInBox>();
-        public static List<PlayableCharacter> ePlayableCharacter = new List<PlayableCharacter>();
+        public static List<SurvivorNetworking> ePlayableCharacter = new List<SurvivorNetworking>();
         public static List<PuzzleButton> ePuzzleButton = new List<PuzzleButton>();
         public static List<PuzzleCabin> ePuzzleCabin = new List<PuzzleCabin>();
         public static List<PuzzleKey> ePuzzleKey = new List<PuzzleKey>();
@@ -42,17 +42,21 @@ namespace In_Silence
         public static List<Witch> eWitch = new List<Witch>();
         public static List<Television> eTelevision = new List<Television>();
         public static List<CreatureAIManager> eCreature = new List<CreatureAIManager>();
-        public static List<BodyAnimator> eBodyPlayer = new List<BodyAnimator>();
-        
-        public static List<Photon.Realtime.Player> ePlayers = new List<Photon.Realtime.Player>();
+        public static List<PlayableCharacter> eBodyPlayer = new List<PlayableCharacter>();
+        public static SurvivorNetworking localPlayer = null;
 
         private static bool runEndOfGame = false;
         public static string dbg = "";
+
+        public static Vector3 newFlyPos;
+        public static float FlyPosY = 1f;
+
+        
         public void Start()
         {
             
         }
-        
+
 
         public void Update()
         {
@@ -68,65 +72,72 @@ namespace In_Silence
             {
                 modules.Aimbot.AimAssist();
             }
-            
+
             if (Input.GetKeyDown(KeyCode.Keypad1))
             {
                 PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
             }
             if (Input.GetKeyDown(KeyCode.Keypad2))
             {
-                if (game_objects.in_silence.Vehicle != null)
-                {
-                    foreach (TruckPart p in game_objects.in_silence.Vehicle.missingParts)
-                    {
-                        game_objects.in_silence.Vehicle.RepairPart(p.partID);
-                    }
-                }
+                //localPlayer.photonView.Owner.NickName = "";
+                localPlayer.guideCircle.enabled = true;
             }
-
-            if (Input.GetKey(KeyCode.Keypad8))
+            if (Input.GetKeyDown(KeyCode.Keypad3))
             {
-                foreach (PlayableCharacter entity in Hacks.ePlayableCharacter)
+                localPlayer.photonView.Owner.NickName = "GoodNoobTube";
+            }
+            if (Input.GetKeyDown(KeyCode.Keypad4))
+            {
+                PhotonNetwork.CurrentRoom.ClearExpectedUsers();
+            }
+            if (Input.GetKey(KeyCode.KeypadPlus) && modules.UI.t_FlyMode)
+            {
+                FlyPosY += 0.05f;
+            }
+            if (Input.GetKey(KeyCode.KeypadMinus) && modules.UI.t_FlyMode)
+            {
+                FlyPosY -= 0.05f;
+            }
+            if (Input.GetKey(KeyCode.Space))
+            {
+                //localPlayer.GetComponentInChildren<FirstPersonController>().jumpWaitTimer = 0.01f;
+                //localPlayer.GetComponentInChildren<FirstPersonController>().Jump();
+            }
+            //this.playerState.worldManager.photonView.RPC("SetPlayerPos", RpcTarget.All, (object) PhotonNetwork.LocalPlayer.NickName, (object) this.transform.position);
+
+            if (modules.UI.t_FlyMode)
+            {
+                foreach (SurvivorNetworking entity in Hacks.ePlayableCharacter)
                 {
-                    if (entity != null)
+                    if (entity != null && entity.photonView.IsMine)
                     {
-                        entity.transform.position = new Vector3(entity.transform.position.x, entity.transform.position.y + 10f, entity.transform.position.z);
-                        if (Hacks.MainCamera.WorldToScreenPoint(entity.transform.position).z > 0f && Vector3.Distance(entity.transform.position, Hacks.MainCamera.transform.position) <= 0.5f)
+                        entity.transform.position = new Vector3(entity.transform.position.x, FlyPosY, entity.transform.position.z);
+                        if (Hacks.MainCamera.WorldToScreenPoint(entity.transform.position).z > 0f && Vector3.Distance(entity.transform.position, Hacks.MainCamera.transform.position) <= 1f)
                         {
-                            entity.transform.position = new Vector3(entity.transform.position.x, entity.transform.position.y + 10f, entity.transform.position.z);
+                            entity.transform.position = new Vector3(entity.transform.position.x, FlyPosY, entity.transform.position.z);
                         }
                     }
                 }
             }
 
-            if (Input.GetKeyDown(KeyCode.Keypad3))
-            {
-                foreach (ActivableItem entity in Hacks.eActivableItem)
-                {
-                    if (entity != null)
-                    {
-                        entity.Activate();
-                    }
-                }
-            }
 
             // 5 Second timer to loop entities and objects to return to lists
-            Timer += Time.deltaTime; 
-            if (Timer >= 5f) 
+            Timer += Time.deltaTime;
+            if (Timer >= 5f)
             {
                 Timer = 0f;
-                
+
                 MainCamera = Camera.main;
-                updateLists();
+
                 if (!WorldManager.isGameFinished)
                 {
                     game_objects.in_silence.update();
                 }
-                
             }
 
             if (WorldManager.isGameFinished)
             {
+
                 if (runEndOfGame != true)
                 {
                     nullItems();
@@ -144,39 +155,7 @@ namespace In_Silence
         {
             modules.ESP.performESP();
             modules.UI.displayUI();
-            GUI.Label(new Rect(0, 0, (float)Screen.width, 50f), dbg);
-        }
-
-        
-        private static void updateLists()
-        {
-            eItem = UnityEngine.GameObject.FindObjectsOfType<Item>().ToList();
-            eActivableItem = UnityEngine.GameObject.FindObjectsOfType<ActivableItem>().ToList();
-            eArmoryDoor = UnityEngine.GameObject.FindObjectsOfType<ArmoryDoor>().ToList();
-            eBearTrap = UnityEngine.GameObject.FindObjectsOfType<BearTrap>().ToList();
-            eCrow = UnityEngine.GameObject.FindObjectsOfType<Crow>().ToList();
-            eCrowFlock = UnityEngine.GameObject.FindObjectsOfType<CrowFlock>().ToList();
-            eDeadBodies = UnityEngine.GameObject.FindObjectsOfType<DeadBodyController>().ToList();
-            eDogHouse = UnityEngine.GameObject.FindObjectsOfType<DogHouse>().ToList();
-            eGroundItem = UnityEngine.GameObject.FindObjectsOfType<GroundItem>().ToList();
-            eJackInBox = UnityEngine.GameObject.FindObjectsOfType<JackInBox>().ToList();
-            ePlayableCharacter = UnityEngine.GameObject.FindObjectsOfType<PlayableCharacter>().ToList();
-            ePuzzleButton = UnityEngine.GameObject.FindObjectsOfType<PuzzleButton>().ToList();
-            ePuzzleCabin = UnityEngine.GameObject.FindObjectsOfType<PuzzleCabin>().ToList();
-            ePuzzleKey = UnityEngine.GameObject.FindObjectsOfType<PuzzleKey>().ToList();
-            ePuzzleTablet = UnityEngine.GameObject.FindObjectsOfType<PuzzleTablet>().ToList();
-            eRadio = UnityEngine.GameObject.FindObjectsOfType<Radio>().ToList();
-            eRabbitController = UnityEngine.GameObject.FindObjectsOfType<RabbitController>().ToList();
-            eRifle = UnityEngine.GameObject.FindObjectsOfType<Rifle>().ToList();
-            eRifleItem = UnityEngine.GameObject.FindObjectsOfType<RifleItem>().ToList();
-            eRocket = UnityEngine.GameObject.FindObjectsOfType<Rocket>().ToList();
-            eStone = UnityEngine.GameObject.FindObjectsOfType<Stone>().ToList();
-            eToy = UnityEngine.GameObject.FindObjectsOfType<Toy>().ToList();
-            eTruckPart = UnityEngine.GameObject.FindObjectsOfType<TruckPart>().ToList();
-            eWitch = UnityEngine.GameObject.FindObjectsOfType<Witch>().ToList();
-            eTelevision = UnityEngine.GameObject.FindObjectsOfType<Television>().ToList();
-            eCreature = UnityEngine.GameObject.FindObjectsOfType<CreatureAIManager>().ToList();
-            eBodyPlayer = UnityEngine.GameObject.FindObjectsOfType<BodyAnimator>().ToList();
+            GUI.Label(new Rect(0, 0, (float)Screen.width, (float)Screen.height), dbg);
         }
 
         private static void nullItems()
